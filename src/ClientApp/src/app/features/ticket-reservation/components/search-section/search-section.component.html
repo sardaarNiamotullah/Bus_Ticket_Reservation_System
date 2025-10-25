@@ -1,134 +1,233 @@
-<div class="bg-white rounded-lg shadow-md p-6 mb-6">
-  <h2 class="text-2xl font-bold text-gray-800 mb-6">Search Your Bus</h2>
-  
+<div
+  class="relative bg-white border border-gray-200 rounded-xl p-6 md:p-8 mb-8"
+>
   <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <!-- From Input -->
-      <div class="flex flex-col">
-        <label for="from" class="text-sm font-medium text-gray-700 mb-2">From</label>
+    <!-- Desktop Layout: All in one row -->
+    <div class="hidden md:flex md:flex-row md:items-start gap-3 mb-5">
+      <!-- From -->
+      <div class="flex-1 flex flex-col">
+        <label
+          class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1 block"
+          >Going From</label
+        >
         <input
           type="text"
-          id="from"
           formControlName="from"
-          placeholder="Enter departure city"
-          class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          [class.border-red-500]="searchForm.get('from')?.invalid && searchForm.get('from')?.touched"
+          placeholder="Enter city"
+          class="w-full px-3 py-3 border border-gray-300 rounded-md focus:border-red-500 focus:ring-1 focus:ring-red-400 outline-none transition text-gray-800 font-medium"
         />
-        <span 
-          *ngIf="searchForm.get('from')?.invalid && searchForm.get('from')?.touched"
-          class="text-red-500 text-xs mt-1"
-        >
-          Departure city is required
-        </span>
+        <div class="h-4 mt-1">
+          <span
+            *ngIf="
+              searchForm.get('from')?.invalid && searchForm.get('from')?.touched
+            "
+            class="text-red-500 text-xs"
+            >Departure city is required</span
+          >
+        </div>
       </div>
 
-      <!-- Swap Button (visible on mobile between inputs) -->
-      <div class="flex items-end justify-center md:hidden">
+      <!-- Swap Button -->
+      <div class="flex justify-center items-center mt-6">
         <button
           type="button"
           (click)="swapLocations()"
-          class="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition"
-          title="Swap locations"
+          class="p-2.5 bg-gray-100 hover:bg-red-100 rounded-md transition flex items-center justify-center"
+          title="Swap"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-red-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+            />
           </svg>
         </button>
       </div>
 
-      <!-- To Input -->
-      <div class="flex flex-col relative">
-        <label for="to" class="text-sm font-medium text-gray-700 mb-2">To</label>
-        <div class="relative">
-          <input
-            type="text"
-            id="to"
-            formControlName="to"
-            placeholder="Enter destination city"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-            [class.border-red-500]="searchForm.get('to')?.invalid && searchForm.get('to')?.touched"
-          />
-          <!-- Swap Button (visible on desktop, overlaid) -->
-          <button
-            type="button"
-            (click)="swapLocations()"
-            class="hidden md:block absolute -left-8 top-1/2 transform -translate-y-1/2 p-2 text-blue-600 hover:bg-blue-50 rounded-full transition"
-            title="Swap locations"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-            </svg>
-          </button>
-        </div>
-        <span 
-          *ngIf="searchForm.get('to')?.invalid && searchForm.get('to')?.touched"
-          class="text-red-500 text-xs mt-1"
+      <!-- To -->
+      <div class="flex-1 flex flex-col">
+        <label
+          class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1 block"
+          >Going To</label
         >
-          Destination city is required
-        </span>
+        <input
+          type="text"
+          formControlName="to"
+          placeholder="Enter destination"
+          class="w-full px-3 py-3 border border-gray-300 rounded-md focus:border-red-500 focus:ring-1 focus:ring-red-400 outline-none transition text-gray-800 font-medium"
+        />
+        <div class="h-4 mt-1">
+          <span
+            *ngIf="
+              searchForm.get('to')?.invalid && searchForm.get('to')?.touched
+            "
+            class="text-red-500 text-xs"
+            >Destination city is required</span
+          >
+        </div>
       </div>
 
-      <!-- Journey Date Input -->
-      <div class="flex flex-col">
-        <label for="journeyDate" class="text-sm font-medium text-gray-700 mb-2">Journey Date</label>
+      <!-- Journey Date -->
+      <div class="flex-1 flex flex-col">
+        <label
+          class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1 block"
+          >Journey Date</label
+        >
         <input
           type="date"
-          id="journeyDate"
           formControlName="journeyDate"
           [min]="minDate"
-          class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          [class.border-red-500]="searchForm.get('journeyDate')?.invalid && searchForm.get('journeyDate')?.touched"
+          class="w-full px-3 py-3 border border-gray-300 rounded-md focus:border-red-500 focus:ring-1 focus:ring-red-400 outline-none transition text-gray-800 font-medium"
         />
-        <span 
-          *ngIf="searchForm.get('journeyDate')?.invalid && searchForm.get('journeyDate')?.touched"
-          class="text-red-500 text-xs mt-1"
-        >
-          Journey date is required
-        </span>
+        <div class="h-4 mt-1">
+          <span
+            *ngIf="
+              searchForm.get('journeyDate')?.invalid &&
+              searchForm.get('journeyDate')?.touched
+            "
+            class="text-red-500 text-xs"
+            >Journey date is required</span
+          >
+        </div>
       </div>
     </div>
 
-    <!-- Search Button -->
-    <div class="flex justify-center md:justify-end">
+    <!-- Mobile Layout: From/Swap/To in one row, Date in next row -->
+    <div class="md:hidden mb-5">
+      <!-- Row 1: From + Swap + To -->
+      <div class="flex flex-row items-start gap-3 mb-5">
+        <!-- From -->
+        <div class="flex-1 flex flex-col">
+          <label
+            class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1 block"
+            >Going From</label
+          >
+          <input
+            type="text"
+            formControlName="from"
+            placeholder="Enter city"
+            class="w-full px-3 py-3 border border-gray-300 rounded-md focus:border-red-500 focus:ring-1 focus:ring-red-400 outline-none transition text-gray-800 font-medium"
+          />
+          <div class="h-4 mt-1">
+            <span
+              *ngIf="
+                searchForm.get('from')?.invalid &&
+                searchForm.get('from')?.touched
+              "
+              class="text-red-500 text-xs"
+              >Departure city is required</span
+            >
+          </div>
+        </div>
+
+        <!-- Swap Button -->
+        <div class="flex justify-center items-center mt-6">
+          <button
+            type="button"
+            (click)="swapLocations()"
+            class="p-2.5 bg-gray-100 hover:bg-red-100 rounded-md transition flex items-center justify-center"
+            title="Swap"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-red-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <!-- To -->
+        <div class="flex-1 flex flex-col">
+          <label
+            class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1 block"
+            >Going To</label
+          >
+          <input
+            type="text"
+            formControlName="to"
+            placeholder="Enter destination"
+            class="w-full px-3 py-3 border border-gray-300 rounded-md focus:border-red-500 focus:ring-1 focus:ring-red-400 outline-none transition text-gray-800 font-medium"
+          />
+          <div class="h-4 mt-1">
+            <span
+              *ngIf="
+                searchForm.get('to')?.invalid && searchForm.get('to')?.touched
+              "
+              class="text-red-500 text-xs"
+              >Destination city is required</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Journey Date (full width) -->
+      <div class="flex flex-col">
+        <label
+          class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1 block"
+          >Journey Date</label
+        >
+        <input
+          type="date"
+          formControlName="journeyDate"
+          [min]="minDate"
+          class="w-full px-3 py-3 border border-gray-300 rounded-md focus:border-red-500 focus:ring-1 focus:ring-red-400 outline-none transition text-gray-800 font-medium"
+        />
+        <div class="h-4 mt-1">
+          <span
+            *ngIf="
+              searchForm.get('journeyDate')?.invalid &&
+              searchForm.get('journeyDate')?.touched
+            "
+            class="text-red-500 text-xs"
+            >Journey date is required</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Trending -->
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between mb-10"
+    >
+      <p class="text-gray-700 font-semibold mb-3 md:mb-0">Trending Searches:</p>
+      <div class="flex flex-wrap gap-3">
+        <button
+          *ngFor="let route of trendingRoutes"
+          type="button"
+          (click)="onTrendingRouteClick(route)"
+          class="px-4 py-2 bg-gray-100 hover:bg-red-100 text-sm font-medium text-gray-800 transition rounded-md"
+        >
+          {{ route.from }} → {{ route.to }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Search Button -->
+    <div class="absolute left-1/2 -bottom-6 transform -translate-x-1/2">
       <button
         type="submit"
         [disabled]="searchForm.invalid"
-        class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 shadow-md hover:shadow-lg"
+        class="px-10 py-3 bg-red-600 text-white font-semibold text-lg rounded-md hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
       >
         Search Bus
       </button>
     </div>
   </form>
-
-  <!-- Trending Routes Section -->
-  <div class="mt-8">
-    <h3 class="text-lg font-semibold text-gray-700 mb-4">Trending Routes</h3>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <button
-        *ngFor="let route of trendingRoutes"
-        type="button"
-        (click)="onTrendingRouteClick(route)"
-        class="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 text-left group"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="font-medium text-gray-800 group-hover:text-blue-600">{{ route.from }}</p>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 my-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-            <p class="font-medium text-gray-800 group-hover:text-blue-600">{{ route.to }}</p>
-          </div>
-          <svg 
-            *ngIf="route.popular" 
-            xmlns="http://www.w3.org/2000/svg" 
-            class="h-5 w-5 text-yellow-500" 
-            viewBox="0 0 20 20" 
-            fill="currentColor"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
-        </div>
-      </button>
-    </div>
-  </div>
 </div>

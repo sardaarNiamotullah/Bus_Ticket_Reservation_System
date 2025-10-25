@@ -1,12 +1,3 @@
-// import { Injectable } from '@angular/core';
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class TicketService {
-
-//   constructor() { }
-// }
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Bus, SearchParams, TrendingRoute } from '../models/ticket.model';
