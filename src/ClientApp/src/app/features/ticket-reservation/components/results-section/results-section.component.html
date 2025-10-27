@@ -1,4 +1,353 @@
-<div class="bg-gray-50 rounded-lg shadow-md p-6 mb-6">
-  <h2 class="text-2xl font-bold text-gray-800 mb-4">Search Results</h2>
-  <p class="text-gray-600">Results will appear here after searching...</p>
+<div *ngIf="searchParams" class="mt-12">
+  <!-- Results Header -->
+  <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Available Buses</h2>
+        <p class="text-gray-600 text-sm mt-1">
+          {{ searchParams.from }} → {{ searchParams.to }}
+          <span class="mx-2">•</span>
+          {{ searchParams.journeyDate | date : "mediumDate" }}
+        </p>
+      </div>
+      <div class="mt-3 md:mt-0">
+        <span
+          class="inline-block px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold"
+        >
+          {{ buses.length }} Buses Found
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+    <div
+      class="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600"
+    ></div>
+  </div>
+
+  <!-- No Results -->
+  <div
+    *ngIf="!isLoading && buses.length === 0"
+    class="bg-white rounded-lg shadow-sm p-12 text-center"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-20 w-20 mx-auto text-gray-400 mb-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <h3 class="text-xl font-semibold text-gray-700 mb-2">No buses found</h3>
+    <p class="text-gray-500">Try adjusting your search criteria</p>
+  </div>
+
+  <!-- Bus List -->
+  <div *ngIf="!isLoading && buses.length > 0" class="space-y-4">
+    <div
+      *ngFor="let bus of buses"
+      class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
+    >
+      <div class="p-5">
+        <!-- DESKTOP & TABLET LAYOUT -->
+        <div class="hidden md:block">
+          <!-- Top Row: Bus Name, Journey Details, Duration, Price -->
+          <div class="flex items-center justify-between mb-3">
+            <!-- Bus Name -->
+            <div class="shrink-0" style="width: 200px">
+              <h3 class="text-lg font-bold text-gray-800">{{ bus.name }}</h3>
+            </div>
+
+            <!-- Journey Details with Duration -->
+            <div class="flex-1 flex items-center justify-center px-4">
+              <!-- Starting Point -->
+              <div class="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <div class="font-bold text-lg text-gray-900">
+                    {{ bus.departureTime }}
+                  </div>
+                  <div class="text-sm text-gray-600">{{ bus.from }}</div>
+                </div>
+              </div>
+
+              <!-- Journey Indicator with Duration -->
+              <div
+                class="mx-6 flex flex-col items-center"
+                style="min-width: 150px"
+              >
+                <div class="text-xs text-gray-500 mb-1">
+                  {{ getJourneyDuration(bus.departureTime, bus.arrivalTime) }}
+                </div>
+                <div class="w-full flex items-center">
+                  <div
+                    class="flex-1 border-t-2 border-dashed border-gray-300"
+                  ></div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 text-gray-400 mx-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                    />
+                  </svg>
+                  <div
+                    class="flex-1 border-t-2 border-dashed border-gray-300"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Arrival Point -->
+              <div class="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <div class="font-bold text-lg text-gray-900">
+                    {{ bus.arrivalTime }}
+                  </div>
+                  <div class="text-sm text-gray-600">{{ bus.to }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Price -->
+            <div class="shrink-0 text-right" style="width: 120px">
+              <div class="text-2xl font-bold text-red-600">৳{{ bus.fare }}</div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-gray-200 my-3"></div>
+
+          <!-- Bottom Row: AC/Non AC Tag, Bus ID, Seats Left, View Seats Button -->
+          <div class="flex items-center justify-between">
+            <!-- Left: AC Tag and Bus ID -->
+            <div
+              class="flex items-center gap-2 text-sm text-gray-600"
+              style="width: 200px"
+            >
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                [class.bg-blue-100]="bus.isAC"
+                [class.text-blue-800]="bus.isAC"
+                [class.bg-gray-100]="!bus.isAC"
+                [class.text-gray-800]="!bus.isAC"
+              >
+                {{ bus.isAC ? "AC" : "NON AC" }}
+              </span>
+              <span class="text-gray-400">•</span>
+              <span>{{ bus.id }}</span>
+            </div>
+
+            <!-- Center: Seats Left -->
+            <div class="flex-1 flex justify-center">
+              <div class="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span
+                  class="font-bold text-lg"
+                  [class.text-green-600]="bus.seatsLeft > 10"
+                  [class.text-orange-600]="
+                    bus.seatsLeft <= 10 && bus.seatsLeft > 5
+                  "
+                  [class.text-red-600]="bus.seatsLeft <= 5"
+                >
+                  {{ bus.seatsLeft }} Seats Left
+                </span>
+              </div>
+            </div>
+
+            <!-- Right: View Seats Button -->
+            <div class="shrink-0" style="width: 150px">
+              <button
+                (click)="onViewSeats(bus)"
+                class="w-full px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+              >
+                VIEW SEATS
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MOBILE LAYOUT -->
+        <div class="md:hidden">
+          <!-- First Row: Bus Name and Price -->
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-bold text-gray-800">{{ bus.name }}</h3>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-bold text-red-600">৳{{ bus.fare }}</div>
+            </div>
+          </div>
+
+          <!-- Second Row: Journey Details -->
+          <div class="mb-3">
+            <div class="flex items-center justify-between">
+              <!-- Starting Info -->
+              <div class="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <div class="font-bold text-base text-gray-900">
+                    {{ bus.departureTime }}
+                  </div>
+                  <div class="text-xs text-gray-600">{{ bus.from }}</div>
+                </div>
+              </div>
+
+              <!-- Duration -->
+              <div class="flex flex-col items-center flex-1 px-3">
+                <div class="text-xs text-gray-500 mb-1">
+                  {{ getJourneyDuration(bus.departureTime, bus.arrivalTime) }}
+                </div>
+                <div
+                  class="w-full border-t-2 border-dashed border-gray-300"
+                ></div>
+              </div>
+
+              <!-- Arrival Info -->
+              <div class="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <div class="font-bold text-base text-gray-900">
+                    {{ bus.arrivalTime }}
+                  </div>
+                  <div class="text-xs text-gray-600">{{ bus.to }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Third Row: AC Tag, Bus ID, and Seats Left -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                [class.bg-blue-100]="bus.isAC"
+                [class.text-blue-800]="bus.isAC"
+                [class.bg-gray-100]="!bus.isAC"
+                [class.text-gray-800]="!bus.isAC"
+              >
+                {{ bus.isAC ? "AC" : "NON AC" }}
+              </span>
+              <span class="text-gray-400">•</span>
+              <span>{{ bus.id }}</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 text-green-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              <span
+                class="text-sm font-bold"
+                [class.text-green-600]="bus.seatsLeft > 10"
+                [class.text-orange-600]="
+                  bus.seatsLeft <= 10 && bus.seatsLeft > 5
+                "
+                [class.text-red-600]="bus.seatsLeft <= 5"
+              >
+                {{ bus.seatsLeft }} Seats
+              </span>
+            </div>
+          </div>
+
+          <!-- View Seats Button -->
+          <button
+            (click)="onViewSeats(bus)"
+            class="w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-md"
+          >
+            VIEW SEATS
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
