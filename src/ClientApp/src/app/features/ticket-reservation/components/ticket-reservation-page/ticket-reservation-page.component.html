@@ -1,13 +1,17 @@
-<div class="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 py-8">
+<div
+  class="min-h-screen bg-linear-to-br from-rose-100 via-gray-150 to-green-200 py-8"
+>
   <div class="container mx-auto px-4 max-w-7xl">
     <!-- Header -->
     <div class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-gray-800 mb-2">Bus Ticket Reservation</h1>
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">
+        Bus Ticket Reservation
+      </h1>
       <p class="text-gray-600">Book your journey with ease</p>
     </div>
 
     <!-- Search Section -->
-    <app-search-section 
+    <app-search-section
       (searchTriggered)="onSearchTriggered($event)"
     ></app-search-section>
 
