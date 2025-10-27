@@ -24,15 +24,22 @@ export interface Bus {
   bookedSeats: number[];
 }
 
-export interface Seat {
-  seatNumber: number;
-  isBooked: boolean;
-  isSelected: boolean;
-}
-
 export interface BookingDetails {
   busId: string;
   seatNumbers: number[];
   passengerName: string;
   mobileNumber: string;
+}
+
+export interface Seat {
+  number: number;
+  isBooked: boolean;
+  isSold: boolean;
+  isSelected: boolean;
+}
+
+export interface BookingForm {
+  name: string;
+  email: string;
+  selectedSeats: number[];
 }

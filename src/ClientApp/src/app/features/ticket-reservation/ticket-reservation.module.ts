@@ -6,4 +6,4 @@ import { TicketReservationRoutingModule } from './ticket-reservation-routing.mod
     TicketReservationRoutingModule
   ]
 })
-export class TicketReservationModule { }
+export class TicketReservationModule {}
