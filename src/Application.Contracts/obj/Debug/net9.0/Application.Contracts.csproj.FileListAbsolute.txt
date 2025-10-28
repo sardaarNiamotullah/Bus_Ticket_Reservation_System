@@ -1,0 +1,16 @@
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/bin/Debug/net9.0/Application.Contracts.deps.json
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/bin/Debug/net9.0/Application.Contracts.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/bin/Debug/net9.0/Application.Contracts.pdb
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/bin/Debug/net9.0/Domain.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/bin/Debug/net9.0/Domain.pdb
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/Application.Contracts.csproj.AssemblyReference.cache
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/Application.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/Application.Contracts.AssemblyInfoInputs.cache
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/Application.Contracts.AssemblyInfo.cs
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/Application.Contracts.csproj.CoreCompileInputs.cache
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/Application.Contracts.sourcelink.json
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/Applicat.6ADCBA11.Up2Date
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/Application.Contracts.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/refint/Application.Contracts.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/Application.Contracts.pdb
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application.Contracts/obj/Debug/net9.0/ref/Application.Contracts.dll
