@@ -1,41 +1,77 @@
+using Application.Extensions;
+using Infrastructure.Extensions;
+using FluentValidation.AspNetCore;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Add services to the container
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => 
+    {
+        fv.RegisterValidatorsFromAssemblyContaining<Application.Contracts.DTOs.Search.SearchBusInputDtoValidator>();
+        fv.DisableDataAnnotationsValidation = true;
+    });
+
+// Add Infrastructure layer (DbContext, Repositories, UnitOfWork)
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Add Application layer (Services, AutoMapper, Domain Services)
+builder.Services.AddApplication();
+
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200") // Angular default port
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
+// Add Swagger/OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    { 
+        Title = "Bus Ticket Reservation API", 
+        Version = "v1",
+        Description = "API for Bus Ticket Reservation System with DDD and Clean Architecture"
+    });
+    
+    // Enable XML comments if needed
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bus Ticket Reservation API v1");
+        c.RoutePrefix = string.Empty; // Swagger at root
+    });
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Enable CORS
+app.UseCors("AllowAngularApp");
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

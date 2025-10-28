@@ -6,10 +6,13 @@
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/WebApi.runtimeconfig.json
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/WebApi.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/WebApi.pdb
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/WebApi.xml
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/AutoMapper.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Azure.Core.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Azure.Identity.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/FluentValidation.dll
-/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Microsoft.AspNetCore.OpenApi.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/FluentValidation.AspNetCore.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/FluentValidation.DependencyInjectionExtensions.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Microsoft.Bcl.AsyncInterfaces.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Microsoft.Data.SqlClient.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.dll
@@ -27,6 +30,9 @@
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Microsoft.OpenApi.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Microsoft.SqlServer.Server.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Microsoft.Win32.SystemEvents.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/System.ClientModel.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/System.Configuration.ConfigurationManager.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/System.Drawing.Common.dll
@@ -52,9 +58,9 @@
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Application.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Domain.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Infrastructure.dll
-/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Domain.pdb
-/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Application.Contracts.pdb
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Application.pdb
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Application.Contracts.pdb
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Domain.pdb
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/bin/Debug/net9.0/Infrastructure.pdb
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/obj/Debug/net9.0/WebApi.csproj.AssemblyReference.cache
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/obj/Debug/net9.0/rpswa.dswa.cache.json
@@ -76,6 +82,7 @@
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/obj/Debug/net9.0/WebApi.csproj.Up2Date
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/obj/Debug/net9.0/WebApi.dll
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/obj/Debug/net9.0/refint/WebApi.dll
+/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/obj/Debug/net9.0/WebApi.xml
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/obj/Debug/net9.0/WebApi.pdb
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/obj/Debug/net9.0/WebApi.genruntimeconfig.cache
 /Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/WebApi/obj/Debug/net9.0/ref/WebApi.dll

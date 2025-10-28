@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebApi</name>
+    </assembly>
+    <members>
+        <member name="M:WebApi.Controllers.BookingController.GetSeatPlan(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Get seat plan for a bus schedule
+            </summary>
+            <param name="scheduleId">Bus schedule ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>Seat plan with availability</returns>
+        </member>
+        <member name="M:WebApi.Controllers.BookingController.BookSeat(Application.Contracts.DTOs.Booking.BookSeatInputDto,System.Threading.CancellationToken)">
+            <summary>
+            Book seats for a bus schedule
+            </summary>
+            <param name="input">Booking details</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>Booking confirmation</returns>
+        </member>
+        <member name="M:WebApi.Controllers.BookingController.CancelBooking(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Cancel a booking
+            </summary>
+            <param name="bookingId">Booking ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>Cancellation result</returns>
+        </member>
+        <member name="M:WebApi.Controllers.SearchController.SearchBuses(Application.Contracts.DTOs.Search.SearchBusInputDto,System.Threading.CancellationToken)">
+            <summary>
+            Search for available buses
+            </summary>
+            <param name="input">Search parameters</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>List of available buses</returns>
+        </member>
+        <member name="M:WebApi.Controllers.SearchController.SearchBusesQuery(System.String,System.String,System.DateTime,System.Threading.CancellationToken)">
+            <summary>
+            Search buses using query parameters (alternative endpoint)
+            </summary>
+        </member>
+    </members>
+</doc>
