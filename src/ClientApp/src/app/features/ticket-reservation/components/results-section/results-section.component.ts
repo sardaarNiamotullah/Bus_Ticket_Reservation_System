@@ -9,7 +9,7 @@ import { Bus, SearchParams } from '../../models/ticket.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './results-section.component.html',
-  styleUrl: './results-section.component.css'
+  styleUrl: './results-section.component.css',
 })
 export class ResultsSectionComponent implements OnInit, OnDestroy {
   buses: Bus[] = [];
@@ -23,7 +23,7 @@ export class ResultsSectionComponent implements OnInit, OnDestroy {
     // Subscribe to search params changes
     this.ticketService.searchParams$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(params => {
+      .subscribe((params) => {
         if (params) {
           this.searchParams = params;
           this.searchBuses(params);
@@ -38,7 +38,8 @@ export class ResultsSectionComponent implements OnInit, OnDestroy {
 
   private searchBuses(params: SearchParams): void {
     this.isLoading = true;
-    this.ticketService.searchBuses(params)
+    this.ticketService
+      .searchBuses(params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (buses) => {
@@ -47,7 +48,7 @@ export class ResultsSectionComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.isLoading = false;
-        }
+        },
       });
   }
 
@@ -62,12 +63,28 @@ export class ResultsSectionComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  formatTime(time: string): string {
-    return time;
+  getJourneyDuration(departure: string, arrival: string): string {
+    // Split into hours/minutes
+    const [depH, depM] = departure.split(':').map(Number);
+    const [arrH, arrM] = arrival.split(':').map(Number);
+
+    // Convert both to minutes since midnight
+    let depMinutes = depH * 60 + depM;
+    let arrMinutes = arrH * 60 + arrM;
+
+    // Handle overnight trips (arrival next day)
+    if (arrMinutes < depMinutes) {
+      arrMinutes += 24 * 60;
+    }
+
+    const diff = arrMinutes - depMinutes;
+    const hours = Math.floor(diff / 60);
+    const minutes = diff % 60;
+
+    return `${hours}h ${minutes}m`;
   }
 
-  getJourneyDuration(departure: string, arrival: string): string {
-    // Simple duration calculation
-    return '6h 30m';
+  formatTime(time: string): string {
+    return time;
   }
 }

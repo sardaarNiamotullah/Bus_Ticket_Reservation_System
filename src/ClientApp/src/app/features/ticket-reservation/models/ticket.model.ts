@@ -11,7 +11,7 @@ export interface TrendingRoute {
 }
 
 export interface Bus {
-  id: string;
+  id: string; // This is the scheduleId from backend
   name: string;
   from: string;
   to: string;
@@ -25,10 +25,11 @@ export interface Bus {
 }
 
 export interface BookingDetails {
-  busId: string;
+  scheduleId: string;
   seatNumbers: number[];
   passengerName: string;
-  mobileNumber: string;
+  passengerEmail: string;
+  bookingType: 'Book' | 'Buy';
 }
 
 export interface Seat {
@@ -42,4 +43,13 @@ export interface BookingForm {
   name: string;
   email: string;
   selectedSeats: number[];
+}
+
+export interface BookingResponse {
+  bookingId: string;
+  scheduleId: string;
+  seatNumbers: number[];
+  totalAmount: number;
+  status: string;
+  message: string;
 }

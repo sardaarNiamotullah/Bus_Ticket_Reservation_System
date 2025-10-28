@@ -17,6 +17,10 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
   seats: Seat[] = [];
   bookingForm!: FormGroup;
   selectedSeats: number[] = [];
+  isLoadingSeats = false;
+  isBooking = false;
+  errorMessage: string | null = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -33,7 +37,7 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
       .subscribe(bus => {
         if (bus) {
           this.selectedBus = bus;
-          this.initializeSeats();
+          this.loadSeatsFromBackend();
         }
       });
   }
@@ -50,21 +54,28 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  private initializeSeats(): void {
+  // Load actual seats from backend
+  private loadSeatsFromBackend(): void {
     if (!this.selectedBus) return;
 
+    this.isLoadingSeats = true;
+    this.errorMessage = null;
     this.seats = [];
     this.selectedSeats = [];
 
-    // Create seats based on totalSeats
-    for (let i = 1; i <= this.selectedBus.totalSeats; i++) {
-      this.seats.push({
-        number: i,
-        isBooked: this.selectedBus.bookedSeats.includes(i) && i % 3 !== 0, // Some are booked
-        isSold: this.selectedBus.bookedSeats.includes(i) && i % 3 === 0,   // Some are sold
-        isSelected: false
+    this.ticketService.getSeatPlan(this.selectedBus.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (seats) => {
+          this.seats = seats;
+          this.isLoadingSeats = false;
+        },
+        error: (error) => {
+          console.error('Error loading seats:', error);
+          this.errorMessage = 'Failed to load seat information. Please try again.';
+          this.isLoadingSeats = false;
+        }
       });
-    }
   }
 
   toggleSeat(seat: Seat): void {
@@ -95,41 +106,57 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
   }
 
   onBook(): void {
-    if (this.bookingForm.invalid || this.selectedSeats.length === 0) {
-      this.markFormAsTouched();
-      return;
-    }
-
-    const bookingData = {
-      bus: this.selectedBus,
-      seats: this.selectedSeats,
-      passenger: this.bookingForm.value,
-      totalAmount: this.getTotalAmount(),
-      bookingType: 'book'
-    };
-
-    console.log('Booking (Reserved):', bookingData);
-    alert(`Seats ${this.selectedSeats.join(', ')} have been reserved!\nTotal: ৳${this.getTotalAmount()}`);
-    this.resetBooking();
+    this.processBooking('Book');
   }
 
   onBuy(): void {
+    this.processBooking('Buy');
+  }
+
+  private processBooking(bookingType: 'Book' | 'Buy'): void {
     if (this.bookingForm.invalid || this.selectedSeats.length === 0) {
       this.markFormAsTouched();
       return;
     }
 
-    const bookingData = {
-      bus: this.selectedBus,
-      seats: this.selectedSeats,
-      passenger: this.bookingForm.value,
-      totalAmount: this.getTotalAmount(),
-      bookingType: 'buy'
+    if (!this.selectedBus) {
+      alert('Please select a bus first');
+      return;
+    }
+
+    this.isBooking = true;
+    this.errorMessage = null;
+
+    const bookingDetails = {
+      scheduleId: this.selectedBus.id,
+      seatNumbers: this.selectedSeats,
+      passengerName: this.bookingForm.value.name,
+      passengerEmail: this.bookingForm.value.email,
+      bookingType: bookingType
     };
 
-    console.log('Booking (Purchased):', bookingData);
-    alert(`Seats ${this.selectedSeats.join(', ')} have been purchased!\nTotal: ৳${this.getTotalAmount()}`);
-    this.resetBooking();
+    this.ticketService.bookSeats(bookingDetails)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isBooking = false;
+          const action = bookingType === 'Book' ? 'reserved' : 'purchased';
+          alert(
+            `Success!\n\nSeats ${this.selectedSeats.join(', ')} have been ${action}!\n` +
+            `Booking ID: ${response.bookingId}\n` +
+            `Total Amount: ৳${response.totalAmount}\n\n` +
+            `${response.message}`
+          );
+          this.resetBooking();
+          // Reload seats to show updated availability
+          this.loadSeatsFromBackend();
+        },
+        error: (error) => {
+          this.isBooking = false;
+          console.error('Booking error:', error);
+          this.errorMessage = error.message || 'Failed to complete booking. Please try again.';
+        }
+      });
   }
 
   private markFormAsTouched(): void {

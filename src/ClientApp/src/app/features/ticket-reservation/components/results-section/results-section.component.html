@@ -175,7 +175,8 @@
                 {{ bus.isAC ? "AC" : "NON AC" }}
               </span>
               <span class="text-gray-400">•</span>
-              <span>{{ bus.id }}</span>
+              <!-- <span>{{ bus.id }}</span> -->
+              <span>{{ bus.id.substring(0, 5) }}</span>
             </div>
 
             <!-- Center: Seats Left -->
