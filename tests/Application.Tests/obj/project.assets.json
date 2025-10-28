@@ -411,6 +411,57 @@
         "build": {
           "build/net6.0/xunit.runner.visualstudio.props": {}
         }
+      },
+      "Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "Application.Contracts": "1.0.0",
+          "Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Application.dll": {}
+        }
+      },
+      "Application.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Application.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Application.Contracts.dll": {}
+        }
+      },
+      "Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Domain.dll": {}
+        }
+      },
+      "Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "Application.Contracts": "1.0.0",
+          "Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Infrastructure.dll": {}
+        }
       }
     }
   },
@@ -932,10 +983,32 @@
         "xunit.runner.visualstudio.2.8.2.nupkg.sha512",
         "xunit.runner.visualstudio.nuspec"
       ]
+    },
+    "Application/1.0.0": {
+      "type": "project",
+      "path": "../../src/Application/Application.csproj",
+      "msbuildProject": "../../src/Application/Application.csproj"
+    },
+    "Application.Contracts/1.0.0": {
+      "type": "project",
+      "path": "../../src/Application.Contracts/Application.Contracts.csproj",
+      "msbuildProject": "../../src/Application.Contracts/Application.Contracts.csproj"
+    },
+    "Domain/1.0.0": {
+      "type": "project",
+      "path": "../../src/Domain/Domain.csproj",
+      "msbuildProject": "../../src/Domain/Domain.csproj"
+    },
+    "Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../../src/Infrastructure/Infrastructure.csproj",
+      "msbuildProject": "../../src/Infrastructure/Infrastructure.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net9.0": [
+      "Application >= 1.0.0",
+      "Infrastructure >= 1.0.0",
       "Microsoft.NET.Test.Sdk >= 17.12.0",
       "coverlet.collector >= 6.0.2",
       "xunit >= 2.9.2",
@@ -966,7 +1039,14 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application/Application.csproj": {
+              "projectPath": "/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Application/Application.csproj"
+            },
+            "/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Infrastructure/Infrastructure.csproj": {
+              "projectPath": "/Users/sardaarniamotullah/github/Bus_Ticket_Reservation_System/src/Infrastructure/Infrastructure.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
