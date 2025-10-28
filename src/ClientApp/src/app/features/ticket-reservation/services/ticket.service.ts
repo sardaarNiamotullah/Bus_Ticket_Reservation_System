@@ -6,29 +6,38 @@ import {
   Bus,
   SearchParams,
   TrendingRoute,
-  BookingDetails,
   Seat,
 } from '../models/ticket.model';
 
-// Backend API response interfaces
 interface BackendBus {
   id: string;
+  busId: string;
   name: string;
-  routeName: string;
+  from: string;
+  to: string;
   departureTime: string;
   arrivalTime: string;
   fare: number;
-  availableSeats: number;
-  totalSeats: number;
+  seatsLeft: number;
   isAC: boolean;
+  totalSeats: number;
+  journeyDate: string;
 }
 
 interface BackendSeatPlan {
   scheduleId: string;
+  busName: string;
+  route: string;
+  journeyDate: string;
   totalSeats: number;
+  availableSeats: number;
   seats: Array<{
-    seatNumber: number;
-    status: string; // "Available", "Booked", "Sold"
+    id: string;
+    number: number;
+    row: number;
+    status: string;
+    isBooked: boolean;
+    isSold: boolean;
   }>;
 }
 
@@ -37,25 +46,27 @@ interface BackendBookingRequest {
   seatNumbers: number[];
   passengerName: string;
   passengerEmail: string;
-  bookingType: string; // "Book" or "Buy"
+  bookingType: string;
 }
 
 interface BackendBookingResponse {
-  bookingId: string;
+  bookingIds: string[];
   scheduleId: string;
   seatNumbers: number[];
-  totalAmount: number;
-  status: string;
+  passengerName: string;
+  passengerEmail: string;
+  bookingType: string;
+  bookingDate: string;
   message: string;
+  success: boolean;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class TicketService {
-  private apiUrl = 'http://localhost:5123/api'; // Your .NET backend URL
+  private apiUrl = 'http://localhost:5123/api';
 
-  // BehaviorSubject holds the current state and emits to subscribers
   private searchParamsSubject = new BehaviorSubject<SearchParams | null>(null);
   public searchParams$: Observable<SearchParams | null> =
     this.searchParamsSubject.asObservable();
@@ -66,7 +77,6 @@ export class TicketService {
 
   constructor(private http: HttpClient) {}
 
-  // Mock data for trending routes (keep as is)
   getTrendingRoutes(): TrendingRoute[] {
     return [
       { from: 'Dhaka', to: 'Chittagong', popular: true },
@@ -76,17 +86,14 @@ export class TicketService {
     ];
   }
 
-  // Update search parameters
   setSearchParams(params: SearchParams): void {
     this.searchParamsSubject.next(params);
   }
 
-  // Get current search params
   getSearchParams(): SearchParams | null {
     return this.searchParamsSubject.value;
   }
 
-  // Search buses from backend API
   searchBuses(params: SearchParams): Observable<Bus[]> {
     const searchRequest = {
       from: params.from,
@@ -105,24 +112,28 @@ export class TicketService {
       );
   }
 
-  // Get seat plan for a specific bus
   getSeatPlan(scheduleId: string): Observable<Seat[]> {
+    console.log('Fetching seat plan for schedule:', scheduleId);
     return this.http
       .get<BackendSeatPlan>(`${this.apiUrl}/Booking/seat-plan/${scheduleId}`)
       .pipe(
-        map((response) => this.mapBackendSeatsToFrontend(response.seats)),
+        map((response) => {
+          console.log('Backend seat plan response:', response);
+          const seats = this.mapBackendSeatsToFrontend(response.seats);
+          console.log('Mapped seats:', seats);
+          return seats;
+        }),
         catchError(this.handleError)
       );
   }
 
-  // Book or buy seats
   bookSeats(bookingDetails: {
     scheduleId: string;
     seatNumbers: number[];
     passengerName: string;
     passengerEmail: string;
     bookingType: 'Book' | 'Buy';
-  }): Observable<BackendBookingResponse> {
+  }): Observable<any> {
     const request: BackendBookingRequest = {
       scheduleId: bookingDetails.scheduleId,
       seatNumbers: bookingDetails.seatNumbers,
@@ -134,141 +145,114 @@ export class TicketService {
     return this.http
       .post<BackendBookingResponse>(`${this.apiUrl}/Booking/book`, request)
       .pipe(
+        map((response) => ({
+          bookingId: response.bookingIds[0],
+          scheduleId: response.scheduleId,
+          seatNumbers: response.seatNumbers,
+          totalAmount: bookingDetails.seatNumbers.length * (this.getSelectedBus()?.fare || 0),
+          status: response.success ? 'Confirmed' : 'Failed',
+          message: response.message,
+        })),
         tap((response) => console.log('Booking response:', response)),
         catchError(this.handleError)
       );
   }
 
-  // Set selected bus for booking
   setSelectedBus(bus: Bus): void {
     this.selectedBusSubject.next(bus);
   }
 
-  // Get selected bus
   getSelectedBus(): Bus | null {
     return this.selectedBusSubject.value;
   }
 
-  // Map backend bus data to frontend format
   private mapBackendBusesToFrontend(
     backendBuses: BackendBus[],
     params: SearchParams
   ): Bus[] {
     return backendBuses.map((bus) => ({
-      id: bus.id, // This is the scheduleId
+      id: bus.id,
       name: bus.name,
       from: params.from,
       to: params.to,
       departureTime: this.formatTime(bus.departureTime),
       arrivalTime: this.formatTime(bus.arrivalTime),
       fare: bus.fare,
-      seatsLeft: bus.availableSeats,
+      seatsLeft: bus.seatsLeft,
       isAC: bus.isAC,
       totalSeats: bus.totalSeats,
-      bookedSeats: [], // Will be populated when seat plan is fetched
+      bookedSeats: [],
     }));
   }
 
-  // Map backend seats to frontend format
   private mapBackendSeatsToFrontend(
-    backendSeats: Array<{ seatNumber: number; status: string }>
+    backendSeats: Array<{
+      id: string;
+      number: number;
+      row: number;
+      status: string;
+      isBooked: boolean;
+      isSold: boolean;
+    }>
   ): Seat[] {
     return backendSeats.map((seat) => ({
-      number: seat.seatNumber,
-      isBooked: seat.status === 'Booked',
-      isSold: seat.status === 'Sold',
+      number: seat.number,
+      isBooked: seat.isBooked,
+      isSold: seat.isSold,
       isSelected: false,
     }));
   }
 
-  // Format time from ISO string to readable format
-  // private formatTime(isoTime: string): string {
-  //   const date = new Date(isoTime);
-  //   let hours = date.getHours();
-  //   const minutes = date.getMinutes();
-  //   const ampm = hours >= 12 ? 'PM' : 'AM';
-  //   hours = hours % 12;
-  //   hours = hours ? hours : 12; // 0 should be 12
-  //   const minutesStr = minutes < 10 ? '0' + minutes : minutes.toString();
-  //   return `${hours}:${minutesStr} ${ampm}`;
-  // }
-
   private formatTime(timeString: string): string {
-    // If it's already in HH:MM:SS format, return as is
+    if (!timeString) return 'N/A';
+
+    // Check if it's already in HH:MM format from backend
+    if (timeString.match(/^\d{1,2}:\d{2}$/)) {
+      const [hours, minutes] = timeString.split(':').map(Number);
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const displayHours = hours % 12 || 12;
+      const minutesStr = minutes < 10 ? '0' + minutes : minutes.toString();
+      return `${displayHours}:${minutesStr} ${ampm}`;
+    }
+
+    // If it's HH:MM:SS format
     if (timeString.match(/^\d{1,2}:\d{2}:\d{2}$/)) {
-      const [hours, minutes] = timeString.split(':');
-      const hourNum = parseInt(hours, 10);
-      const ampm = hourNum >= 12 ? 'PM' : 'AM';
-      const displayHours = hourNum % 12 || 12;
-      return `${displayHours}:${minutes} ${ampm}`;
+      const [hours, minutes] = timeString.split(':').map(Number);
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const displayHours = hours % 12 || 12;
+      const minutesStr = minutes < 10 ? '0' + minutes : minutes.toString();
+      return `${displayHours}:${minutesStr} ${ampm}`;
     }
 
     // If it's ISO string, parse it
-    const date = new Date(timeString);
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const minutesStr = minutes < 10 ? '0' + minutes : minutes.toString();
-    return `${hours}:${minutesStr} ${ampm}`;
-  }
-
-  calculateDuration(departureTime: string, arrivalTime: string): string {
     try {
-      let depHours: number, depMinutes: number;
-      let arrHours: number, arrMinutes: number;
-
-      // Parse departure time
-      if (departureTime.match(/^\d{1,2}:\d{2}:\d{2}$/)) {
-        [depHours, depMinutes] = departureTime.split(':').map(Number);
-      } else {
-        const depDate = new Date(departureTime);
-        depHours = depDate.getHours();
-        depMinutes = depDate.getMinutes();
-      }
-
-      // Parse arrival time
-      if (arrivalTime.match(/^\d{1,2}:\d{2}:\d{2}$/)) {
-        [arrHours, arrMinutes] = arrivalTime.split(':').map(Number);
-      } else {
-        const arrDate = new Date(arrivalTime);
-        arrHours = arrDate.getHours();
-        arrMinutes = arrDate.getMinutes();
-      }
-
-      // Calculate total minutes
-      let totalMinutes =
-        arrHours * 60 + arrMinutes - (depHours * 60 + depMinutes);
-
-      // Handle overnight journeys
-      if (totalMinutes < 0) {
-        totalMinutes += 24 * 60; // Add 24 hours
-      }
-
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-
-      return `${hours}h ${minutes}m`;
+      const date = new Date(timeString);
+      let hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const minutesStr = minutes < 10 ? '0' + minutes : minutes.toString();
+      return `${hours}:${minutesStr} ${ampm}`;
     } catch (error) {
-      console.error('Error calculating duration:', error);
-      return 'N/A';
+      console.error('Error formatting time:', error);
+      return timeString;
     }
   }
 
-  // Error handling
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An error occurred';
 
     if (error.error instanceof ErrorEvent) {
-      // Client-side error
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Backend error
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      if (error.error && error.error.message) {
+        errorMessage = error.error.message;
+      }
     }
 
-    console.error(errorMessage);
+    console.error('HTTP Error:', errorMessage, error);
     return throwError(() => new Error(errorMessage));
   }
 }

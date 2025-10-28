@@ -1,6 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { TicketService } from '../../services/ticket.service';
 import { Bus, Seat } from '../../models/ticket.model';
@@ -10,7 +15,7 @@ import { Bus, Seat } from '../../models/ticket.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './booking-section.component.html',
-  styleUrl: './booking-section.component.css'
+  styleUrl: './booking-section.component.css',
 })
 export class BookingSectionComponent implements OnInit, OnDestroy {
   selectedBus: Bus | null = null;
@@ -23,18 +28,15 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private ticketService: TicketService,
-    private fb: FormBuilder
-  ) {}
+  constructor(private ticketService: TicketService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initializeForm();
-    
+
     // Subscribe to selected bus changes
     this.ticketService.selectedBus$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(bus => {
+      .subscribe((bus) => {
         if (bus) {
           this.selectedBus = bus;
           this.loadSeatsFromBackend();
@@ -50,31 +52,42 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
   private initializeForm(): void {
     this.bookingForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
   // Load actual seats from backend
   private loadSeatsFromBackend(): void {
-    if (!this.selectedBus) return;
+    if (!this.selectedBus) {
+      console.error('No selected bus');
+      return;
+    }
 
+    console.log('Loading seats for bus:', this.selectedBus.id);
     this.isLoadingSeats = true;
     this.errorMessage = null;
     this.seats = [];
     this.selectedSeats = [];
 
-    this.ticketService.getSeatPlan(this.selectedBus.id)
+    this.ticketService
+      .getSeatPlan(this.selectedBus.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (seats) => {
-          this.seats = seats;
+        next: (seatPlan) => {
+          console.log('Received seat plan:', seatPlan);
+          this.seats = seatPlan;
           this.isLoadingSeats = false;
+
+          if (this.seats.length === 0) {
+            this.errorMessage = 'No seats available for this bus.';
+          }
         },
         error: (error) => {
           console.error('Error loading seats:', error);
-          this.errorMessage = 'Failed to load seat information. Please try again.';
+          this.errorMessage =
+            'Failed to load seat information. Please try again.';
           this.isLoadingSeats = false;
-        }
+        },
       });
   }
 
@@ -86,7 +99,9 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
     if (seat.isSelected) {
       this.selectedSeats.push(seat.number);
     } else {
-      this.selectedSeats = this.selectedSeats.filter(num => num !== seat.number);
+      this.selectedSeats = this.selectedSeats.filter(
+        (num) => num !== seat.number
+      );
     }
 
     // Sort selected seats
@@ -94,7 +109,8 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
   }
 
   getSeatClass(seat: Seat): string {
-    if (seat.isSelected) return 'bg-green-500 text-white cursor-pointer hover:bg-green-600';
+    if (seat.isSelected)
+      return 'bg-green-500 text-white cursor-pointer hover:bg-green-600';
     if (seat.isSold) return 'bg-red-400 text-white cursor-not-allowed';
     if (seat.isBooked) return 'bg-orange-400 text-white cursor-not-allowed';
     return 'bg-white border-2 border-gray-300 text-gray-700 cursor-pointer hover:bg-green-100 hover:border-green-500';
@@ -132,20 +148,23 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
       seatNumbers: this.selectedSeats,
       passengerName: this.bookingForm.value.name,
       passengerEmail: this.bookingForm.value.email,
-      bookingType: bookingType
+      bookingType: bookingType,
     };
 
-    this.ticketService.bookSeats(bookingDetails)
+    this.ticketService
+      .bookSeats(bookingDetails)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.isBooking = false;
           const action = bookingType === 'Book' ? 'reserved' : 'purchased';
           alert(
-            `Success!\n\nSeats ${this.selectedSeats.join(', ')} have been ${action}!\n` +
-            `Booking ID: ${response.bookingId}\n` +
-            `Total Amount: ৳${response.totalAmount}\n\n` +
-            `${response.message}`
+            `Success!\n\nSeats ${this.selectedSeats.join(
+              ', '
+            )} have been ${action}!\n` +
+              `Booking ID: ${response.bookingId}\n` +
+              `Total Amount: ৳${response.totalAmount}\n\n` +
+              `${response.message}`
           );
           this.resetBooking();
           // Reload seats to show updated availability
@@ -154,13 +173,14 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.isBooking = false;
           console.error('Booking error:', error);
-          this.errorMessage = error.message || 'Failed to complete booking. Please try again.';
-        }
+          this.errorMessage =
+            error.message || 'Failed to complete booking. Please try again.';
+        },
       });
   }
 
   private markFormAsTouched(): void {
-    Object.keys(this.bookingForm.controls).forEach(key => {
+    Object.keys(this.bookingForm.controls).forEach((key) => {
       this.bookingForm.get(key)?.markAsTouched();
     });
   }
@@ -168,7 +188,7 @@ export class BookingSectionComponent implements OnInit, OnDestroy {
   private resetBooking(): void {
     this.bookingForm.reset();
     this.selectedSeats = [];
-    this.seats.forEach(seat => seat.isSelected = false);
+    this.seats.forEach((seat) => (seat.isSelected = false));
   }
 
   // Helper method to split seats into rows of 4 (2 + 2)

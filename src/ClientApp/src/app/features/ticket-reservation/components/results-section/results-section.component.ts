@@ -64,24 +64,48 @@ export class ResultsSectionComponent implements OnInit, OnDestroy {
   }
 
   getJourneyDuration(departure: string, arrival: string): string {
-    // Split into hours/minutes
-    const [depH, depM] = departure.split(':').map(Number);
-    const [arrH, arrM] = arrival.split(':').map(Number);
+    try {
+      // Parse time strings like "10:30 PM" or "22:00"
+      const parseTime = (timeStr: string): number => {
+        // Check if it's in 12-hour format (e.g., "10:30 PM")
+        if (timeStr.includes('AM') || timeStr.includes('PM')) {
+          const [time, period] = timeStr.split(' ');
+          let [hours, minutes] = time.split(':').map(Number);
 
-    // Convert both to minutes since midnight
-    let depMinutes = depH * 60 + depM;
-    let arrMinutes = arrH * 60 + arrM;
+          if (period === 'PM' && hours !== 12) {
+            hours += 12;
+          } else if (period === 'AM' && hours === 12) {
+            hours = 0;
+          }
 
-    // Handle overnight trips (arrival next day)
-    if (arrMinutes < depMinutes) {
-      arrMinutes += 24 * 60;
+          return hours * 60 + minutes;
+        }
+
+        // If it's in 24-hour format (e.g., "22:00")
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return hours * 60 + minutes;
+      };
+
+      const depMinutes = parseTime(departure);
+      let arrMinutes = parseTime(arrival);
+
+      // Handle overnight trips (arrival next day)
+      if (arrMinutes < depMinutes) {
+        arrMinutes += 24 * 60;
+      }
+
+      const diff = arrMinutes - depMinutes;
+      const hours = Math.floor(diff / 60);
+      const minutes = diff % 60;
+
+      return `${hours}h ${minutes}m`;
+    } catch (error) {
+      console.error('Error calculating duration:', error, {
+        departure,
+        arrival,
+      });
+      return 'N/A';
     }
-
-    const diff = arrMinutes - depMinutes;
-    const hours = Math.floor(diff / 60);
-    const minutes = diff % 60;
-
-    return `${hours}h ${minutes}m`;
   }
 
   formatTime(time: string): string {
