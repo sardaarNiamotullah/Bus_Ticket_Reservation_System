@@ -53,7 +53,7 @@ cd Bus_Ticket_Reservation_System/src
 
 ### 3. Environment Configuration
 
-Create a .env file in the WebApi project root:
+Create a .env file in the project root:
 
 ```bash
 DB_HOST=localhost
@@ -64,10 +64,19 @@ DB_PASSWORD=your_secure_password_here
 
 ### 4. Apply Migrations
 
-From the WebApi directory:
+From the Infrastructure directory:
 
 ```bash
-dotnet ef database update --project ../Infrastructure/Infrastructure.csproj
+# Navigate to Infrastructure
+cd src/Infrastructure
+# Remove old migrations if any
+rm -rf Migrations
+
+# Create new migration
+dotnet ef migrations add InitialCreate --startup-project ../WebApi
+
+# Apply migration to create tables
+dotnet ef database update --startup-project ../WebApi
 ```
 
 ### Populate Seed Data (Required After Migration)
@@ -76,8 +85,8 @@ After successful migration, you must seed initial data to populate buses, routes
 Run Seed SQL Script
 Connect to PostgreSQL and execute the following script:
 
-```bash
 -- Insert Buses
+```bash
 INSERT INTO "Buses" ("Id", "Name", "BusNumber", "IsAC", "TotalSeats", "FareAmount", "Currency", "CreatedAt", "UpdatedAt")
 VALUES
 (gen_random_uuid(), 'Green Line Paribahan', 'GL-001', true, 40, 800.00, 'BDT', NOW(), NOW()),
@@ -85,8 +94,11 @@ VALUES
 (gen_random_uuid(), 'Hanif Enterprise', 'HE-003', false, 40, 600.00, 'BDT', NOW(), NOW()),
 (gen_random_uuid(), 'Ena Transport', 'ET-004', true, 40, 850.00, 'BDT', NOW(), NOW()),
 (gen_random_uuid(), 'Shohagh Paribahan', 'SH-005', false, 36, 650.00, 'BDT', NOW(), NOW());
+```
 
 -- Insert Routes
+
+```bash
 INSERT INTO "Routes" ("Id", "FromCity", "ToCity", "DepartureTime", "ArrivalTime", "DurationMinutes", "CreatedAt", "UpdatedAt")
 VALUES
 (gen_random_uuid(), 'Dhaka', 'Chittagong', '22:00:00', '06:00:00', 480, NOW(), NOW()),
@@ -94,8 +106,11 @@ VALUES
 (gen_random_uuid(), 'Dhaka', 'Rajshahi', '21:30:00', '05:30:00', 480, NOW(), NOW()),
 (gen_random_uuid(), 'Chittagong', 'Dhaka', '22:30:00', '06:30:00', 480, NOW(), NOW()),
 (gen_random_uuid(), 'Dhaka', 'Coxs Bazar', '20:00:00', '08:00:00', 720, NOW(), NOW());
+```
 
 -- Generate Schedules & Seats for next 7 days
+
+```bash
 DO $$
 DECLARE
     bus_record RECORD;
